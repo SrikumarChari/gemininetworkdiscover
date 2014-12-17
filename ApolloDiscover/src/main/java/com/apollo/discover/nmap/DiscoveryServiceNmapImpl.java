@@ -7,6 +7,9 @@ package com.apollo.discover.nmap;
 
 import com.apollo.discover.basediscover.BaseDiscoveryService;
 import com.apollo.discover.basediscover.DiscoverNetworkRange;
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.net.InetAddresses;
 import com.google.inject.Singleton;
 import java.io.IOException;
 import java.util.List;
@@ -28,14 +31,32 @@ public class DiscoveryServiceNmapImpl implements BaseDiscoveryService {
         String nmapCmd = "";
         for (DiscoverNetworkRange dn : networks) {
             if (!dn.isDiscoveryComplete()) {
-                nmapCmd += dn.getStart() + "-" + dn.getEnd();
-                dn.setDiscoveryComplete(true);
+                String start = InetAddresses.toAddrString(dn.getStart());
+                String end = InetAddresses.toAddrString(dn.getEnd());
+
+                //get the last three letters of the end string
+                Iterable<String> splits = Splitter.on(".").split(end);
+                for (String s : splits) {
+                    end = s;
+                }
+                nmapCmd += start + "-" + end + ",";
             }
         }
-        
+
+        if (nmapCmd.isEmpty()) {
+            //no hosts to discover
+            return;
+        }
+
         NMap nmap = new NMap();
         try {
-            nmap.runCommand(nmapCmd);
+            //run the nmap.run command, returns a list of hosts
+            List<Host> l = nmap.runCommand(nmapCmd);
+
+            //store the servers in the database
+            //the other service needs a REST API to add the servers
+            //for now just print to the console
+            System.out.println(Joiner.on(",").join(l));
         } catch (IOException | InterruptedException | ParserConfigurationException | SAXException ex) {
             Logger.getLogger(DiscoveryServiceNmapImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -43,6 +64,36 @@ public class DiscoveryServiceNmapImpl implements BaseDiscoveryService {
 
     @Override
     public void fullDiscover(List<DiscoverNetworkRange> networks) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //build the network for nmap
+        String nmapCmd = "";
+        for (DiscoverNetworkRange dn : networks) {
+            String start = InetAddresses.toAddrString(dn.getStart());
+            String end = InetAddresses.toAddrString(dn.getEnd());
+
+            //get the last three letters of the end string
+            Iterable<String> splits = Splitter.on(".").split(end);
+            for (String s : splits) {
+                end = s;
+            }
+            nmapCmd += start + "-" + end + ",";
+        }
+
+        if (nmapCmd.isEmpty()) {
+            //no hosts to discover
+            return;
+        }
+
+        NMap nmap = new NMap();
+        try {
+            //run the nmap.run command, returns a list of hosts
+            List<Host> l = nmap.runCommand(nmapCmd);
+
+            //store the servers in the database
+            //the other service needs a REST API to add the servers
+            //for now just print to the console
+            System.out.println(Joiner.on(",").join(l));
+        } catch (IOException | InterruptedException | ParserConfigurationException | SAXException ex) {
+            Logger.getLogger(DiscoveryServiceNmapImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

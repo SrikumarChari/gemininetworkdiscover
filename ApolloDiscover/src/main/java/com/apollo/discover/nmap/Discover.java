@@ -1,5 +1,7 @@
 package com.apollo.discover.nmap;
 
+import java.util.List;
+
 /**
  * 
  * @author Dahai Li
@@ -7,5 +9,5 @@ package com.apollo.discover.nmap;
  * Discover is an interface for discover network hosts.
  */
 public interface Discover {
-	Host[] discover (Object target);
+	List<Host> discover (Object target);
 }

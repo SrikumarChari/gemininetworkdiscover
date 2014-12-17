@@ -3,6 +3,7 @@ package com.apollo.discover.nmap;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.*;
 
@@ -27,7 +28,7 @@ public class NMap implements Discover {
      * @throws IOException
      * @throws SAXException
      */
-    public Host[] readXMLFile(String fileName) throws ParserConfigurationException, SAXException, IOException {
+    public List<Host> readXMLFile(String fileName) throws ParserConfigurationException, SAXException, IOException {
         ArrayList<Host> result = new ArrayList<>();
 
         DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -82,11 +83,11 @@ public class NMap implements Discover {
         }
         Host[] r = new Host[result.size()];
         result.toArray(r);
-        return r;
+        return result;
     }
 
-    public Host[] runCommand(String network) throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        Host[] result = null;
+    public List<Host> runCommand(String network) throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+        List<Host> result = null;
         String fileName = getTempFileName();
         /**
          * *
@@ -151,7 +152,7 @@ public class NMap implements Discover {
     }
 
     @Override
-    public Host[] discover(Object target) {
+    public List<Host> discover(Object target) {
         try {
             return runCommand((String) target);
         } catch (Exception e) {
@@ -178,7 +179,7 @@ public class NMap implements Discover {
                 System.exit(-1);
             }
 
-            Host[] hosts = null;
+            List<Host> hosts = null;
             NMap nmap = new NMap();
             switch ((args[0])) {
                 case "-f":
@@ -191,12 +192,12 @@ public class NMap implements Discover {
                     printHelp();
                     System.exit(-1);
             }
-            if (hosts == null || hosts.length == 0) {
+            if (hosts == null || hosts.isEmpty()) {
                 System.out.println("No host detected.");
                 System.exit(1);
             }
             for (Host host : hosts) {
-                System.out.println("Address: " + host.address + ", Name: " + host.name + ", OS: " + host.os);
+                System.out.println(host.toString());
             }
             System.exit(0);
         } catch (ParserConfigurationException | SAXException | IOException e) {

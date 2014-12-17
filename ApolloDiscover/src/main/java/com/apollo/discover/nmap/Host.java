@@ -31,4 +31,9 @@ public class Host {
                 && name.equals(other.name)
                 && os.equals(other.os);
     }
+    
+    @Override
+    public String toString() {
+        return "address:" + address + "name:" + name + "OS:" + os;
+    }
 }
