@@ -1,12 +1,9 @@
 package com.apollo.discover.nmap;
 
-import com.apollo.discover.nmap.Host;
-import com.apollo.discover.nmap.Discover;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
 
@@ -30,8 +27,8 @@ public class NMapJDOM implements Discover {
      * @throws IOException
      * @throws SAXException
      */
-    public Host[] readXMLFile(String fileName) throws JDOMException, IOException {
-        ArrayList<Host> result = new ArrayList<>();
+    public List<Host> readXMLFile(String fileName) throws JDOMException, IOException {
+        List<Host> result = new ArrayList<>();
         SAXBuilder builder = new SAXBuilder();
         File xmlFile = new File(fileName);
 
@@ -81,9 +78,7 @@ public class NMapJDOM implements Discover {
             result.add(new Host(getHostAddress(host), getHostName(host),
                     getHostOS(host)));
         }
-        Host[] r = new Host[result.size()];
-        result.toArray(r);
-        return r;
+        return result;
     }
 
     /**
@@ -96,8 +91,8 @@ public class NMapJDOM implements Discover {
      * @throws InterruptedException
      * @throws JDOMException
      */
-    public Host[] runCommand(String network) throws IOException, InterruptedException, JDOMException {
-        Host[] result = null;
+    public List<Host> runCommand(String network) throws IOException, InterruptedException, JDOMException {
+        List<Host> result = null;
         String fileName = getTempFileName();
         /**
          * *
@@ -163,7 +158,7 @@ public class NMapJDOM implements Discover {
     }
 
     @Override
-    public Host[] discover(Object target) {
+    public List<Host> discover(Object target) {
         try {
             return runCommand((String) target);
         } catch (Exception e) {
@@ -190,7 +185,7 @@ public class NMapJDOM implements Discover {
                 System.exit(-1);
             }
 
-            Host[] hosts = null;
+            List<Host> hosts = null;
             NMap nmap = new NMap();
             switch ((args[0])) {
                 case "-f":
@@ -203,7 +198,7 @@ public class NMapJDOM implements Discover {
                     printHelp();
                     System.exit(-1);
             }
-            if (hosts == null || hosts.length == 0) {
+            if (hosts == null || hosts.isEmpty()) {
                 System.out.println("No host detected.");
                 System.exit(1);
             }

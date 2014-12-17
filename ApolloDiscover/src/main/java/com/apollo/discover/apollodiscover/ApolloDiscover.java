@@ -5,11 +5,9 @@
  */
 package com.apollo.discover.apollodiscover;
 
-import com.apollo.discover.basediscover.BaseDiscoveryService;
+import com.apollo.discover.basediscover.DiscoveryType;
 import com.apollo.discover.basediscover.DiscoverNetworkRange;
-import com.apollo.discover.nmap.DiscoveryServiceNmapImpl;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import com.apollo.discover.basediscover.DiscoveryService;
 import java.util.ArrayList;
 import java.util.List;
 import static spark.Spark.*;
@@ -23,17 +21,23 @@ import static spark.Spark.*;
 public class ApolloDiscover {
 
     private final static List<DiscoverNetworkRange> discoveryNetworks = new ArrayList();
-    private final static boolean autoDiscover = false;
+    private final static boolean autoDiscover = true; //immediately do a discovery 
+    private static final DiscoveryService discSvc = new DiscoveryService();
 
     public static void main(String[] args) {
         //for now we will listen on 1234, i.e., 'localhost:1234/...'
         setPort(1234);
 
-        //we only support nmap discovery for now... create the injector and bind the service
-        //this will eventually be controlled by a value based on the user's environment
-        Injector injector = Guice.createInjector(new DiscoveryModule());
-        BaseDiscoveryService discSvc = injector.getInstance(DiscoveryServiceNmapImpl.class);
+        //currently we will default to physical discovery
+        discSvc.setDiscType(DiscoveryType.PHYSICAL);
 
+        //change the discovery type in the discovery service
+        post("/disctype", "application/json", (request, response) -> {
+            String dType = request.queryParams("disctype");
+            discSvc.setDiscType(dType);
+            return "Successfully changed discovery type";
+        }, new JsonTransformer());
+        
         get("/networks", "application/json", (request, response) -> {
             //return the networks...
             return discoveryNetworks;

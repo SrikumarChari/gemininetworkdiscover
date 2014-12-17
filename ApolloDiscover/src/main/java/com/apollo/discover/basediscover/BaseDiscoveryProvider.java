@@ -11,7 +11,8 @@ import java.util.List;
  *
  * @author schari
  */
-public interface BaseDiscoveryService {
+public interface BaseDiscoveryProvider {
+    public String discoveryDesc();
     public void discover (List<DiscoverNetworkRange> networks); //only discover new networks
     public void fullDiscover(List<DiscoverNetworkRange> networks); //discover all networks, i.e., a refresh
 }

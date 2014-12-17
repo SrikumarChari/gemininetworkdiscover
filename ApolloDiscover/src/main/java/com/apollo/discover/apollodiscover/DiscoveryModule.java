@@ -5,8 +5,9 @@
  */
 package com.apollo.discover.apollodiscover;
 
-import com.apollo.discover.basediscover.BaseDiscoveryService;
-import com.apollo.discover.nmap.DiscoveryServiceNmapImpl;
+import com.apollo.discover.basediscover.BaseDiscoveryProvider;
+import com.apollo.discover.basediscover.DiscoveryType;
+import com.apollo.discover.nmap.DiscoveryProviderNmapImpl;
 import com.google.inject.AbstractModule;
 
 /**
@@ -15,8 +16,18 @@ import com.google.inject.AbstractModule;
  */
 public class DiscoveryModule extends AbstractModule {
 
+    private DiscoveryType type;
+
+    public DiscoveryModule(DiscoveryType type) {
+        this.type = type;
+    }
+
     @Override
     protected void configure() {
-        bind(BaseDiscoveryService.class).to(DiscoveryServiceNmapImpl.class);
+        if (type == DiscoveryType.PHYSICAL) {
+            bind(BaseDiscoveryProvider.class).to(DiscoveryProviderNmapImpl.class);
+        } else if (type == DiscoveryType.RACKSPACE) {
+            bind(BaseDiscoveryProvider.class).to(DiscoveryProviderNmapImpl.class);
+        }
     }
 }

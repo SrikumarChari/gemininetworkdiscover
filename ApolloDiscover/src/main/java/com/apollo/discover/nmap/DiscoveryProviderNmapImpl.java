@@ -5,7 +5,7 @@
  */
 package com.apollo.discover.nmap;
 
-import com.apollo.discover.basediscover.BaseDiscoveryService;
+import com.apollo.discover.basediscover.BaseDiscoveryProvider;
 import com.apollo.discover.basediscover.DiscoverNetworkRange;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -13,17 +13,16 @@ import com.google.common.net.InetAddresses;
 import com.google.inject.Singleton;
 import java.io.IOException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
+import org.pmw.tinylog.Logger;
 
 /**
  *
  * @author schari
  */
 @Singleton
-public class DiscoveryServiceNmapImpl implements BaseDiscoveryService {
+public class DiscoveryProviderNmapImpl implements BaseDiscoveryProvider {
 
     @Override
     public void discover(List<DiscoverNetworkRange> networks) {
@@ -58,7 +57,7 @@ public class DiscoveryServiceNmapImpl implements BaseDiscoveryService {
             //for now just print to the console
             System.out.println(Joiner.on(",").join(l));
         } catch (IOException | InterruptedException | ParserConfigurationException | SAXException ex) {
-            Logger.getLogger(DiscoveryServiceNmapImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.error("NMAP Discovery failed: {}", ex.toString());
         }
     }
 
@@ -93,7 +92,12 @@ public class DiscoveryServiceNmapImpl implements BaseDiscoveryService {
             //for now just print to the console
             System.out.println(Joiner.on(",").join(l));
         } catch (IOException | InterruptedException | ParserConfigurationException | SAXException ex) {
-            Logger.getLogger(DiscoveryServiceNmapImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.error("NMAP Discovery failed: {}", ex.toString());
         }
+    }
+
+    @Override
+    public String discoveryDesc() {
+        return "DiscoveryServiceNmapImpl discovers physical hosts given a Class C network or range/set of IP Addresses";
     }
 }
