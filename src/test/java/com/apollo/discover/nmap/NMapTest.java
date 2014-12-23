@@ -3,14 +3,12 @@ package com.apollo.discover.nmap;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.jdom2.JDOMException;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 import org.xml.sax.SAXException;
 
 import com.apollo.discover.nmap.Host;
