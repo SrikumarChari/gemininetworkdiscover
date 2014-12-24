@@ -1,10 +1,12 @@
-package com.moonlite.discover;
+package com.apollo.discover.nmap;
 
 import static org.junit.Assert.*;
 
 import java.io.IOException;
 
 import org.junit.Test;
+
+import com.apollo.discover.nmap.Shell;
 
 /**
  * 
