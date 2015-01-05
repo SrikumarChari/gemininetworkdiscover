@@ -4,7 +4,9 @@
  */
 package com.apollo.discover.basediscover;
 
+import com.apollo.discovery.domain.model.DiscoverNetworkRange;
 import com.apollo.discover.apollodiscover.DiscoveryModule;
+import com.apollo.discover.nmap.Host;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import java.util.List;
@@ -25,7 +27,6 @@ public class DiscoveryService {
 
     public void setDiscType(DiscoveryType discType) {
         this.discType = discType;
-
     }
 
     public void setDiscType(String dType) {
@@ -40,11 +41,12 @@ public class DiscoveryService {
         }
     }
 
-    public void discover(List<DiscoverNetworkRange> networks) {
+    public List<Host> discover(List<DiscoverNetworkRange> networks) {
         if (discoveryProvider != null) {
-            discoveryProvider.discover(networks);
+            return discoveryProvider.discover(networks);
         } else {
             Logger.error("Discovery type not set!!");
+            return null;
         }
     }
 }

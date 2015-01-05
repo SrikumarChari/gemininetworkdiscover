@@ -6,7 +6,8 @@
 package com.apollo.discover.rackspace;
 
 import com.apollo.discover.basediscover.BaseDiscoveryProvider;
-import com.apollo.discover.basediscover.DiscoverNetworkRange;
+import com.apollo.discovery.domain.model.DiscoverNetworkRange;
+import com.apollo.discover.nmap.Host;
 import java.util.List;
 
 /**
@@ -14,7 +15,7 @@ import java.util.List;
  * @author schari
  */
 public class DiscoveryProviderRackspaceImpl implements BaseDiscoveryProvider {
-    
+
     //rackspace username and password
     private String userName = "";
     private String password = "";
@@ -25,13 +26,16 @@ public class DiscoveryProviderRackspaceImpl implements BaseDiscoveryProvider {
     }
 
     @Override
-    public void discover(List<DiscoverNetworkRange> networks) {
-        System.out.println("Not supported yet."); 
+    public List<Host> discover(List<DiscoverNetworkRange> networks) {
+        System.out.println("Not supported yet.");
+        return null;
     }
 
     @Override
-    public void fullDiscover(List<DiscoverNetworkRange> networks) {
-        System.out.println("Not supported yet."); 
+    public List<Host> fullDiscover(List<DiscoverNetworkRange> networks) {
+        System.out.println("Not supported yet.");
+        return null;
+
     }
-    
+
 }

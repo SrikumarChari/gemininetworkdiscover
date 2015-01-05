@@ -6,7 +6,7 @@
 package com.apollo.discover.apollodiscover;
 
 import com.apollo.discover.basediscover.DiscoveryType;
-import com.apollo.discover.basediscover.DiscoverNetworkRange;
+import com.apollo.discovery.domain.model.DiscoverNetworkRange;
 import com.apollo.discover.basediscover.DiscoveryService;
 import java.util.ArrayList;
 import java.util.List;

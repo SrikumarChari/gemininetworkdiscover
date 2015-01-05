@@ -5,6 +5,8 @@
  */
 package com.apollo.discover.basediscover;
 
+import com.apollo.discovery.domain.model.DiscoverNetworkRange;
+import com.apollo.discover.nmap.Host;
 import java.util.List;
 
 /**
@@ -13,6 +15,6 @@ import java.util.List;
  */
 public interface BaseDiscoveryProvider {
     public String discoveryDesc();
-    public void discover (List<DiscoverNetworkRange> networks); //only discover new networks
-    public void fullDiscover(List<DiscoverNetworkRange> networks); //discover all networks, i.e., a refresh
+    public List<Host> discover (List<DiscoverNetworkRange> networks); //only discover new networks
+    public List<Host> fullDiscover(List<DiscoverNetworkRange> networks); //discover all networks, i.e., a refresh
 }

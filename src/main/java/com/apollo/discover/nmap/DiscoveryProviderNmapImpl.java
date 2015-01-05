@@ -6,7 +6,7 @@
 package com.apollo.discover.nmap;
 
 import com.apollo.discover.basediscover.BaseDiscoveryProvider;
-import com.apollo.discover.basediscover.DiscoverNetworkRange;
+import com.apollo.discovery.domain.model.DiscoverNetworkRange;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.net.InetAddresses;
@@ -25,7 +25,7 @@ import org.pmw.tinylog.Logger;
 public class DiscoveryProviderNmapImpl implements BaseDiscoveryProvider {
 
     @Override
-    public void discover(List<DiscoverNetworkRange> networks) {
+    public List<Host> discover(List<DiscoverNetworkRange> networks) {
         //build the network for nmap
         String nmapCmd = "";
         for (DiscoverNetworkRange dn : networks) {
@@ -44,7 +44,7 @@ public class DiscoveryProviderNmapImpl implements BaseDiscoveryProvider {
 
         if (nmapCmd.isEmpty()) {
             //no hosts to discover
-            return;
+            return null;
         }
 
         NMap nmap = new NMap();
@@ -56,13 +56,15 @@ public class DiscoveryProviderNmapImpl implements BaseDiscoveryProvider {
             //the other service needs a REST API to add the servers
             //for now just print to the console
             System.out.println(Joiner.on(",").join(l));
+            return l;
         } catch (IOException | InterruptedException | ParserConfigurationException | SAXException ex) {
             Logger.error("NMAP Discovery failed: {}", ex.toString());
+            return null;
         }
     }
 
     @Override
-    public void fullDiscover(List<DiscoverNetworkRange> networks) {
+    public List<Host> fullDiscover(List<DiscoverNetworkRange> networks) {
         //build the network for nmap
         String nmapCmd = "";
         for (DiscoverNetworkRange dn : networks) {
@@ -79,7 +81,7 @@ public class DiscoveryProviderNmapImpl implements BaseDiscoveryProvider {
 
         if (nmapCmd.isEmpty()) {
             //no hosts to discover
-            return;
+            return null;
         }
 
         NMap nmap = new NMap();
@@ -91,8 +93,10 @@ public class DiscoveryProviderNmapImpl implements BaseDiscoveryProvider {
             //the other service needs a REST API to add the servers
             //for now just print to the console
             System.out.println(Joiner.on(",").join(l));
+            return l;
         } catch (IOException | InterruptedException | ParserConfigurationException | SAXException ex) {
             Logger.error("NMAP Discovery failed: {}", ex.toString());
+            return null;
         }
     }
 

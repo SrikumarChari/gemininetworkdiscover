@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.apollo.discover.basediscover;
+package com.apollo.discovery.domain.model;
 
 import com.google.common.net.InetAddresses;
 import java.net.InetAddress;
