@@ -28,22 +28,37 @@ public class DiscoveryProviderNmapImpl implements BaseDiscoveryProvider {
     public List<Host> discover(List<DiscoverNetworkRange> networks) {
         //build the network for nmap
         String nmapCmd = "";
+//        networks.stream()
+//                .filter(dn -> dn.isDiscoveryComplete())
+//                .forEach((dn) -> {
+//                    String start = InetAddresses.toAddrString(dn.getStart());
+//                    String end = InetAddresses.toAddrString(dn.getEnd());
+//
+//                    //get the last three letters of the end string
+//                    Iterable<String> splits = Splitter.on(".").split(end);
+//                    for (String s : splits) {
+//                        end = s;
+//                    }
+//                    nmapCmd = start + "-" + end + ",";
+//                });
+
         for (DiscoverNetworkRange dn : networks) {
             if (!dn.isDiscoveryComplete()) {
                 String start = InetAddresses.toAddrString(dn.getStart());
                 String end = InetAddresses.toAddrString(dn.getEnd());
 
                 //get the last three letters of the end string
-                Iterable<String> splits = Splitter.on(".").split(end);
-                for (String s : splits) {
-                    end = s;
+                List<String> splits = Splitter.on(".").splitToList(end);
+                nmapCmd += start + "-" + splits.get(splits.size()-1);
+                if (networks.size() != 1) {
+                    nmapCmd += ",";
                 }
-                nmapCmd += start + "-" + end + ",";
             }
         }
 
         if (nmapCmd.isEmpty()) {
             //no hosts to discover
+            Logger.error("NMAP Discovery: No hosts to discover");
             return null;
         }
 
@@ -55,7 +70,7 @@ public class DiscoveryProviderNmapImpl implements BaseDiscoveryProvider {
             //store the servers in the database
             //the other service needs a REST API to add the servers
             //for now just print to the console
-            System.out.println(Joiner.on(",").join(l));
+            //System.out.println(Joiner.on(",").join(l));
             return l;
         } catch (IOException | InterruptedException | ParserConfigurationException | SAXException ex) {
             Logger.error("NMAP Discovery failed: {}", ex.toString());
@@ -92,7 +107,7 @@ public class DiscoveryProviderNmapImpl implements BaseDiscoveryProvider {
             //store the servers in the database
             //the other service needs a REST API to add the servers
             //for now just print to the console
-            System.out.println(Joiner.on(",").join(l));
+            //System.out.println(Joiner.on(",").join(l));
             return l;
         } catch (IOException | InterruptedException | ParserConfigurationException | SAXException ex) {
             Logger.error("NMAP Discovery failed: {}", ex.toString());

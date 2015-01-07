@@ -98,7 +98,7 @@ public class NMapJDOM implements Discover {
          * *
          * -O option is to detect OS. It can only be run under privileged mode.
          */
-        if (new Shell().run("nmap", "-F", "-O", "-oX", fileName, network) == 0) {
+        if (new Shell().run("/Users/schari/Desktop/nmap-6.47/nmap", "-F", "-O", "-oX", fileName, network) == 0) {
             result = readXMLFile(fileName);
         }
         return result;
@@ -203,7 +203,7 @@ public class NMapJDOM implements Discover {
                 System.exit(1);
             }
             for (Host host : hosts) {
-                System.out.println("Address: " + host.address + ", Name: " + host.name + ", OS: " + host.os);
+                System.out.println("Address: " + host.getAddress() + ", Name: " + host.getName() + ", OS: " + host.getOs());
             }
             System.exit(0);
         } catch (Exception e) {

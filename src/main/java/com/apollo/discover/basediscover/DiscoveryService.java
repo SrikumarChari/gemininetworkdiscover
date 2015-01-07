@@ -21,12 +21,19 @@ public class DiscoveryService {
     private DiscoveryType discType;
     private BaseDiscoveryProvider discoveryProvider = null;
 
+    public DiscoveryService(DiscoveryType discoveryType) {
+        setDiscType(discoveryType);
+    }
+
     public DiscoveryType getDiscType() {
         return discType;
     }
 
     public void setDiscType(DiscoveryType discType) {
         this.discType = discType;
+        //inject the discovery provider
+        Injector injector = Guice.createInjector(new DiscoveryModule(discType));
+        discoveryProvider = injector.getInstance(BaseDiscoveryProvider.class);
     }
 
     public void setDiscType(String dType) {

@@ -2,9 +2,11 @@ package com.apollo.discover.nmap;
 
 //import java.io.*;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 
 /**
  * *
@@ -30,6 +32,17 @@ public class Shell {
      */
     public int run(String... args) throws IOException, InterruptedException {
         process = Runtime.getRuntime().exec(args);
+
+        //needed to supply the password
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
+        
+        //TODO: change the code below to retrieve password from an application settings object
+        String password = "insert password here";
+        writer.write(password);
+        writer.write("\n");
+        writer.flush();
+        
+        //wait for the process to finish
         process.waitFor();
         return process.exitValue();
     }

@@ -8,13 +8,37 @@ package com.apollo.discover.nmap;
  */
 public class Host {
 
-    String address = "";
-    String name = "";
-    String os = "";
+    private String address = "";
+    private String name = "";
+    private String os = "";
 
     public Host(String address, String name, String os) {
         this.address = address;
         this.name = name;
+        this.os = os;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getOs() {
+        return os;
+    }
+
+    public void setOs(String os) {
         this.os = os;
     }
 

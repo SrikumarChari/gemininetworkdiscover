@@ -93,7 +93,7 @@ public class NMap implements Discover {
          * *
          * -O option is to detect OS. It can only be run under privileged mode.
          */
-        if (new Shell().run("nmap", "-F", "-O", "-oX", fileName, network) == 0) {
+        if (new Shell().run("sudo", "-S", "/Users/schari/Desktop/nmap-6.47/nmap", "-F", "-O", "-oX", fileName, network) == 0) {
             result = readXMLFile(fileName);
         }
         return result;
