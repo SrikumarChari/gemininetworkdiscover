@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.Arrays;
 
 /**
  * *
@@ -33,20 +34,47 @@ public class Shell {
     public int run(String... args) throws IOException, InterruptedException {
         process = Runtime.getRuntime().exec(args);
 
-        //needed to supply the password
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
-        
-        //TODO: change the code below to retrieve password from an application settings object
-        String password = "insert password here";
-        writer.write(password);
-        writer.write("\n");
-        writer.flush();
-        
         //wait for the process to finish
         process.waitFor();
         return process.exitValue();
     }
 
+    /**
+     * Run a command with sudo, i.e. in root privilege.
+     * @param password String, the password for running sudo. null if you have setup /etc/sudoers to not prompt for password.
+     * @param args String[] arguments
+     * @return exit value of running the command.
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public int sudoRun(String password, String... args) throws IOException, InterruptedException {
+    	String[] argv;
+    	if (password != null) {
+	    	argv = new String[args.length+2];
+	    	argv[0] = "sudo";
+	    	argv[1] = "-S";
+	    	System.arraycopy(args, 0, argv, 2, args.length);
+    	} else {
+	    	argv = new String[args.length+1];
+	    	argv[0] = "sudo";
+	    	System.arraycopy(args, 0, argv, 1, args.length);
+    	}
+        process = Runtime.getRuntime().exec(argv);
+
+        if (password != null) {
+        //needed to supply the password
+	        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
+	        writer.write(password);
+	        writer.write("\n");
+	        writer.flush();
+        }
+        
+        //wait for the process to finish
+        process.waitFor();
+        return process.exitValue();
+    }
+    
+    
     /**
      *
      * @return the exit value from the last invokation of run
