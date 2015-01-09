@@ -56,4 +56,85 @@ public class NMapTest {
             fail("Fails to read the file");
         }
     }
+
+    @Test
+    public void testDiscoverASingleHost() {
+        NMap nmap = new NMap("/usr/local/bin/nmap");
+        List<Host> hosts = nmap.discover("www.cisco.com");
+        for (Host host : hosts) {
+            System.out.println("Address: " + host.getAddress() + ", Name: " + host.getName() + ", OS: " + host.getOs());
+        }
+        assertEquals(hosts.size(), 1);
+    }
+
+    @Ignore
+    public void testDiscoverNetwork() {
+        NMap nmap = new NMap("/usr/local/bin/nmap");
+        List<Host> hosts = nmap.discover("belize/24");
+        for (Host host : hosts) {
+            System.out.println("Address: " + host.getAddress() + ", Name: " + host.getName() + ", OS: " + host.getOs());
+        }
+        assertEquals(hosts.size(), 1);
+    }
+    
+    @Test
+    public void testDiscoverNetworkRang() {
+        NMap nmap = new NMap("/usr/local/bin/nmap");
+        List<Host> hosts = nmap.discover("172.37.145.84-90");
+        for (Host host : hosts) {
+            System.out.println("Address: " + host.getAddress() + ", Name: " + host.getName() + ", OS: " + host.getOs());
+        }
+        assertNotEquals(hosts.size(), 0);
+    }
+
+    @Test
+    public void testDiscoverNetworkMultiHosts() {
+        NMap nmap = new NMap("/usr/local/bin/nmap");
+        List<Host> hosts = nmap.discover("www.cisco.com,wwwin.cisco.com");
+        for (Host host : hosts) {
+            System.out.println("Address: " + host.getAddress() + ", Name: " + host.getName() + ", OS: " + host.getOs());
+        }
+        assertEquals(hosts.size(), 2);
+    }
+
+    @Test
+    public void testDiscoverASingleHostWithJDOM() {
+        NMapJDOM nmap = new NMapJDOM("/usr/local/bin/nmap");
+        List<Host> hosts = nmap.discover("www.cisco.com");
+        for (Host host : hosts) {
+            System.out.println("Address: " + host.getAddress() + ", Name: " + host.getName() + ", OS: " + host.getOs());
+        }
+        assertEquals(hosts.size(), 1);
+    }
+
+    @Ignore
+    // running discover for a class C network can take a while! may even stuck?
+    public void testDiscoverNetworkWithJDOM() {
+        NMapJDOM nmap = new NMapJDOM("/usr/local/bin/nmap");
+        List<Host> hosts = nmap.discover("belize/24");
+        for (Host host : hosts) {
+            System.out.println("Address: " + host.getAddress() + ", Name: " + host.getName() + ", OS: " + host.getOs());
+        }
+        assertNotEquals(hosts.size(), 0);
+    }
+    
+    @Test
+    public void testDiscoverNetworkRangeWithJDOM() {
+        NMapJDOM nmap = new NMapJDOM("/usr/local/bin/nmap");
+        List<Host> hosts = nmap.discover("172.37.145.84-90");
+        for (Host host : hosts) {
+            System.out.println("Address: " + host.getAddress() + ", Name: " + host.getName() + ", OS: " + host.getOs());
+        }
+        assertNotEquals(hosts.size(), 0);
+    }
+
+    @Test
+    public void testDiscoverNetworkMultiHostsWithJDOM() {
+        NMapJDOM nmap = new NMapJDOM("/usr/local/bin/nmap");
+        List<Host> hosts = nmap.discover("www.cisco.com,wwwin.cisco.com");
+        for (Host host : hosts) {
+            System.out.println("Address: " + host.getAddress() + ", Name: " + host.getName() + ", OS: " + host.getOs());
+        }
+        assertEquals(hosts.size(), 2);
+    }
 }

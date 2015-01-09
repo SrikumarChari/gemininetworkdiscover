@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
 
@@ -16,8 +17,17 @@ import org.jdom2.input.SAXBuilder;
  *
  */
 public class NMapJDOM implements Discover {
+	private String nmapCmd;
 
-    /**
+	public NMapJDOM () {
+		this("/usr/local/bin/nmap");
+	}
+	
+	public NMapJDOM (String nmapCmd) {
+		this.nmapCmd = nmapCmd;
+	}
+
+	/**
      *
      * @param fileName string, the filename containing the output from running
      * "nmap -oX <filename> <network>"
@@ -85,7 +95,7 @@ public class NMapJDOM implements Discover {
      * *
      * Discover the network by running the nmap command
      *
-     * @param network
+     * @param network String, "1.2.3.4/24", "1.2.3.4-10", "www.cisco.com", "www.ibm.com,www.hpq.com"
      * @return Host[]
      * @throws IOException
      * @throws InterruptedException
@@ -98,7 +108,18 @@ public class NMapJDOM implements Discover {
          * *
          * -O option is to detect OS. It can only be run under privileged mode.
          */
-        if (new Shell().run("/Users/schari/Desktop/nmap-6.47/nmap", "-F", "-O", "-oX", fileName, network) == 0) {
+        // nmap does not take target in the form of "host1,host2", but "host1" "host2".
+        String[] targets = network.split(",");
+        String[] argv = new String[5+targets.length];
+    	System.arraycopy(targets, 0, argv, 5, targets.length);
+    	argv[0] = nmapCmd;
+    	argv[1] = "-F";
+    	argv[2] = "-O";
+    	argv[3] = "-oX";
+    	argv[4] = fileName;
+
+    	//assuming you are able to run "sudo nmap" without password. See /etc/sudoers
+        if (new Shell().sudoRun(null, argv) == 0) {
             result = readXMLFile(fileName);
         }
         return result;

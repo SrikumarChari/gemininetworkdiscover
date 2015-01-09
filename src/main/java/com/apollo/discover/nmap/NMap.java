@@ -18,6 +18,15 @@ import org.xml.sax.SAXException;
  * @see Host
  */
 public class NMap implements Discover {
+	private String nmapCmd;
+
+	public NMap () {
+		this("/usr/local/bin/nmap");
+	}
+	
+	public NMap (String nmapCmd) {
+		this.nmapCmd = nmapCmd;
+	}
 
     /**
      *
@@ -93,7 +102,18 @@ public class NMap implements Discover {
          * *
          * -O option is to detect OS. It can only be run under privileged mode.
          */
-        if (new Shell().run("sudo", "-S", "/Users/schari/Desktop/nmap-6.47/nmap", "-F", "-O", "-oX", fileName, network) == 0) {
+        // nmap does not take target in the form of "host1,host2", but "host1" "host2".
+        String[] targets = network.split(",");
+        String[] argv = new String[5+targets.length];
+    	System.arraycopy(targets, 0, argv, 5, targets.length);
+    	argv[0] = nmapCmd;
+    	argv[1] = "-F";
+    	argv[2] = "-O";
+    	argv[3] = "-oX";
+    	argv[4] = fileName;
+
+    	//assuming you are able to run "sudo nmap" without password. See /etc/sudoers
+        if (new Shell().sudoRun(null, argv) == 0) {
             result = readXMLFile(fileName);
         }
         return result;

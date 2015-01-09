@@ -27,7 +27,15 @@ will use the  NMap.runCommmand method to generate method.
 There one thing to note on using NMap.runCommand method. It requires root privilege to run "nmap -O" option, the
 option to detect OS in the hosts. So you need to run "java NMap -n <target>" in privileged mode:
      sudo java NMap -n www.microsoft.com/24
-      
+ 
+ You can modify /etc/sudoers file to run "sudo nmap" without asked for password. (make usre use "sudo visudo" to
+ edit that file.)
+ For me, I have the following line added to the end of /etc/sodoers file:
+ 
+ dli	ALL=NOPASSWD: /usr/local/bin/nmap
+
+You should replace "dli" by your username in your system, replace "/usr/local/bin/nmap" to the path of your nmap
+location.
 
 3. Host.java
 This class defines the data model of a host. Currently, it contains three attributes: address, name, and os.
