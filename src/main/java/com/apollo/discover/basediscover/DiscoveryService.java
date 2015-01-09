@@ -4,9 +4,10 @@
  */
 package com.apollo.discover.basediscover;
 
-import com.apollo.discovery.domain.model.DiscoverNetworkRange;
 import com.apollo.discover.apollodiscover.DiscoveryModule;
 import com.apollo.discover.nmap.Host;
+import com.apollo.domain.model.ApolloEnvironmentType;
+import com.apollo.domain.model.ApolloNetwork;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import java.util.List;
@@ -18,18 +19,14 @@ import org.pmw.tinylog.Logger;
  */
 public class DiscoveryService {
 
-    private DiscoveryType discType;
+    private ApolloEnvironmentType discType;
     private BaseDiscoveryProvider discoveryProvider = null;
 
-    public DiscoveryService(DiscoveryType discoveryType) {
-        setDiscType(discoveryType);
-    }
-
-    public DiscoveryType getDiscType() {
+    public ApolloEnvironmentType getDiscType() {
         return discType;
     }
 
-    public void setDiscType(DiscoveryType discType) {
+    public void setDiscType(ApolloEnvironmentType discType) {
         this.discType = discType;
         //inject the discovery provider
         Injector injector = Guice.createInjector(new DiscoveryModule(discType));
@@ -37,7 +34,7 @@ public class DiscoveryService {
     }
 
     public void setDiscType(String dType) {
-        for (DiscoveryType d : DiscoveryType.values()) {
+        for (ApolloEnvironmentType d : ApolloEnvironmentType.values()) {
             if (d.name().equals(dType)) {
                 discType = d;
 
@@ -48,9 +45,27 @@ public class DiscoveryService {
         }
     }
 
-    public List<Host> discover(List<DiscoverNetworkRange> networks) {
+    public List<Host> discoverNetworks(List<ApolloNetwork> networks) {
         if (discoveryProvider != null) {
-            return discoveryProvider.discover(networks);
+            return discoveryProvider.discoverNetworks(networks);
+        } else {
+            Logger.error("Discovery type not set!!");
+            return null;
+        }
+    }
+
+    public List<Host> discoverSingleNetwork(ApolloNetwork network) {
+        if (discoveryProvider != null) {
+            return discoveryProvider.discoverSingleNetwork(network);
+        } else {
+            Logger.error("Discovery type not set!!");
+            return null;
+        }
+    }
+    
+    public List<Host> fullDiscover (List<ApolloNetwork> networks) {
+        if (discoveryProvider != null) {
+            return discoveryProvider.fullDiscover(networks);
         } else {
             Logger.error("Discovery type not set!!");
             return null;
