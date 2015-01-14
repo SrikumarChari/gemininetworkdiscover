@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.apollo.discover</groupId>
-    <artifactId>ApolloDiscover</artifactId>
+    <groupId>com.gemini.discover.networkdiscover</groupId>
+    <artifactId>GeminiNetworkDiscover</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
-        <main-class>com.apollo.discover.ApolloDiscover</main-class>
+        <main-class>com.gemini.discover.networkdiscover.GeminiNetworkDiscover</main-class>
         <spark.version>2.0.0</spark.version>
         <google.guava.version>18.0</google.guava.version>
         <mongodb.java.driver.version>2.12.4</mongodb.java.driver.version>
@@ -108,7 +108,7 @@
         <dependency>
             <groupId>commons-net</groupId>
             <artifactId>commons-net</artifactId>
-            <version>3.2</version>
+            <version>3.3</version>
         </dependency>
         <dependency>
             <groupId>com.google.inject.extensions</groupId>
@@ -142,5 +142,5 @@
             </plugin>
         </plugins>
     </build>
-    <name>ApolloDiscover</name>
+    <name>GeminiNetworkDiscover</name>
 </project>
