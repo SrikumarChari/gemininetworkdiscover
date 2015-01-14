@@ -6,8 +6,8 @@
 package com.apollo.discover.security;
 
 import com.apollo.discover.basediscover.BaseDiscoveryProvider;
-import com.apollo.discovery.domain.model.DiscoverNetworkRange;
 import com.apollo.discover.nmap.Host;
+import com.apollo.domain.model.ApolloNetwork;
 import java.util.List;
 import org.pmw.tinylog.Logger;
 
@@ -24,13 +24,19 @@ public class DiscoveryProviderSecurityImpl implements BaseDiscoveryProvider {
     }
 
     @Override
-    public List<Host> discover(List<DiscoverNetworkRange> networks) {
+    public List<Host> discoverNetworks(List<ApolloNetwork> networks) {
         Logger.error("Not supported yet.");
         return null;
     }
 
     @Override
-    public List<Host> fullDiscover(List<DiscoverNetworkRange> networks) {
+    public List<Host> fullDiscover(List<ApolloNetwork> networks) {
+        Logger.error("Not supported yet.");
+        return null;
+    }
+
+    @Override
+    public List<Host> discoverSingleNetwork(ApolloNetwork network) {
         Logger.error("Not supported yet.");
         return null;
     }

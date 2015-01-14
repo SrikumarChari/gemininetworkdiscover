@@ -6,7 +6,7 @@
 package com.apollo.discover.apollodiscover;
 
 import com.apollo.discover.basediscover.BaseDiscoveryProvider;
-import com.apollo.discover.basediscover.DiscoveryType;
+import com.apollo.domain.model.ApolloEnvironmentType;
 import com.apollo.discover.nmap.DiscoveryProviderNmapImpl;
 import com.google.inject.AbstractModule;
 
@@ -16,17 +16,17 @@ import com.google.inject.AbstractModule;
  */
 public class DiscoveryModule extends AbstractModule {
 
-    private DiscoveryType type;
+    private ApolloEnvironmentType type;
 
-    public DiscoveryModule(DiscoveryType type) {
+    public DiscoveryModule(ApolloEnvironmentType type) {
         this.type = type;
     }
 
     @Override
     protected void configure() {
-        if (type == DiscoveryType.PHYSICAL) {
+        if (type == ApolloEnvironmentType.PHYSICAL) {
             bind(BaseDiscoveryProvider.class).to(DiscoveryProviderNmapImpl.class);
-        } else if (type == DiscoveryType.RACKSPACE) {
+        } else if (type == ApolloEnvironmentType.RACKSPACE) {
             bind(BaseDiscoveryProvider.class).to(DiscoveryProviderNmapImpl.class);
         }
     }
