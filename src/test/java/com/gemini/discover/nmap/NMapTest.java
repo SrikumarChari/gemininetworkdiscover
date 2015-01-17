@@ -83,7 +83,7 @@ public class NMapTest {
     @Test
     public void testDiscoverNetworkRang() {
         NMap nmap = new NMap("/usr/local/bin/nmap");
-        List<Host> hosts = nmap.discover("172.37.145.84-90");
+        List<Host> hosts = nmap.discover("72.163.4.161-170");
         for (Host host : hosts) {
             System.out.println("Address: " + host.getAddress() + ", Name: " + host.getName() + ", OS: " + host.getOs());
         }
@@ -93,7 +93,7 @@ public class NMapTest {
     @Test
     public void testDiscoverNetworkMultiHosts() {
         NMap nmap = new NMap("/usr/local/bin/nmap");
-        List<Host> hosts = nmap.discover("www.cisco.com,wwwin.cisco.com");
+        List<Host> hosts = nmap.discover("www.cisco.com,www.yahoo.com");
         for (Host host : hosts) {
             System.out.println("Address: " + host.getAddress() + ", Name: " + host.getName() + ", OS: " + host.getOs());
         }
@@ -124,7 +124,7 @@ public class NMapTest {
     @Test
     public void testDiscoverNetworkRangeWithJDOM() {
         NMapJDOM nmap = new NMapJDOM("/usr/local/bin/nmap");
-        List<Host> hosts = nmap.discover("172.37.145.84-90");
+        List<Host> hosts = nmap.discover("72.163.4.161-170");
         for (Host host : hosts) {
             System.out.println("Address: " + host.getAddress() + ", Name: " + host.getName() + ", OS: " + host.getOs());
         }
@@ -134,7 +134,7 @@ public class NMapTest {
     @Test
     public void testDiscoverNetworkMultiHostsWithJDOM() {
         NMapJDOM nmap = new NMapJDOM("/usr/local/bin/nmap");
-        List<Host> hosts = nmap.discover("www.cisco.com,wwwin.cisco.com");
+        List<Host> hosts = nmap.discover("www.cisco.com,www.ibm.com");
         for (Host host : hosts) {
             System.out.println("Address: " + host.getAddress() + ", Name: " + host.getName() + ", OS: " + host.getOs());
         }

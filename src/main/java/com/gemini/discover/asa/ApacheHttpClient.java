@@ -11,6 +11,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
@@ -20,6 +21,7 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.BasicCredentialsProvider;
@@ -29,35 +31,51 @@ import org.apache.http.util.EntityUtils;
 
 
 /**
- * Use Apache's HttpClient for GET method
+ * Use Apache's HttpClient for GET and POST method
  * @author dli
  *
  */
 public class ApacheHttpClient {
-    private ResponseHandler<String> respHandler = new ResponseHandler<String>() {
-        @Override
-        public String handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
-            final int status = response.getStatusLine().getStatusCode();
-            if (status >= 200 && status < 300) {
-                final HttpEntity entity = response.getEntity();
-                return entity != null ? EntityUtils.toString(entity) : null;
-            } else {
-                throw new ClientProtocolException("Unexpected response status: " + status);
-            }
-        }
-    };
+	private ResponseHandler<String> respHandler = new ResponseHandler<String>() {
+		@Override
+		public String handleResponse(HttpResponse response)
+				throws ClientProtocolException, IOException {
+			final int status = response.getStatusLine().getStatusCode();
+			if (status >= 200 && status < 300) {
+				final HttpEntity entity = response.getEntity();
+				return entity != null ? EntityUtils.toString(entity) : null;
+			} else {
+				throw new ClientProtocolException(
+						"Unexpected response status: " + status);
+			}
+		}
+	};
 
-    /**
-     * Use HttpCLient from Apache, which is even more simpler. Similar to it in JavaScript
-     * 
-     * @param path String
-     * @return String
-     * @throws IOException
-     */
-     public String get(String path) throws IOException {
-         return get(path, HttpClients.createDefault(), respHandler);
-    }
+	/**
+	 * Use HttpCLient from Apache, which is even more simpler. Similar to it in
+	 * JavaScript
+	 * 
+	 * @param path String
+	 * @return String the response contents
+	 * @throws IOException
+	 */
+	public String get(String path) throws IOException {
+		return get(path, HttpClients.createDefault(), respHandler);
+	}
 
+	/**
+	 * Use HttpCLient from Apache, which is even more simpler. Similar to it in
+	 * JavaScript
+	 * 
+	 * @param url String
+	 * @param entity HttpEntity, the data load
+	 * @return String the response contents
+	 * @throws IOException
+	 */
+	public String post(String url, HttpEntity entity) throws IOException {
+		return post(url, HttpClients.createDefault(), respHandler, entity);
+	}
+     
     /**
      * Use HttpClient but not using responseHandler.
      * @param path String
@@ -79,23 +97,41 @@ public class ApacheHttpClient {
      * @param path String
      * @param username String
      * @param password String
-     * @return String
+     * @return String, the contents of the requested web page
      * @throws IOException
      */
     public String get(String path, String username, String password) throws IOException {
-        final CloseableHttpClient httpClient = HttpClients.custom()
-                .setDefaultCredentialsProvider(createCredsProvider(username, password))
-                .setSSLSocketFactory(createGenerousSSLSocketFactory())
-                .build();
+        final CloseableHttpClient httpClient = createTrustyHttpClient(username,	password);
         return get(path, httpClient, respHandler);
     }
 
+
+    /***
+     * This is a https post request that bypasses certificate checking and hostname verifier.
+     * It uses basis authentication method.
+     * It is tested with Apache httpclient-4.4.
+     * It dumps the contents of a https page on the console output.
+     * It is very similar to http get request, but with the additional customization of
+     *   - credential provider, and
+     *   - SSLConnectionSocketFactory to bypass certification checking and hostname verifier.
+     * @param path String
+     * @param username String
+     * @param password String
+     * @param entity HttpEntity the data to be posted
+     * @return String, the response of the post request
+     * @throws IOException
+     */
+    public String post(String url, String username, String password, HttpEntity entity) throws IOException {
+        final CloseableHttpClient httpClient = createTrustyHttpClient(username, password);
+        return post(url, httpClient, respHandler, entity);
+    }
+    
     /**
      * It is preferable to use ResponseHandler when running HttpClient.execute in order to avoid buffer content in memory.
      * @param path
      * @param httpClient
      * @param respHandler
-     * @return String
+     * @return String, the contents of the requested web page
      * @throws IOException
      */
     private String get(String path, CloseableHttpClient httpClient, ResponseHandler<String> respHandler) throws IOException {
@@ -106,6 +142,20 @@ public class ApacheHttpClient {
         }
     }
 
+    private String post(String url, CloseableHttpClient httpClient, ResponseHandler<String> respHandler, HttpEntity entity) throws IOException {
+        try {
+        	HttpPost post = new HttpPost(url);
+        	Header contentType = entity.getContentType();
+        	if (contentType != null) {
+        		post.addHeader(contentType.getName(), contentType.getValue());
+        	}
+        	post.setEntity(entity);
+        	return  httpClient.execute(post, respHandler);
+        } finally {
+            httpClient.close();
+        }
+    }
+    
     private String get(String path, CloseableHttpClient httpClient) throws IOException {
         final CloseableHttpResponse response = httpClient.execute(new HttpGet(path));
         try {
@@ -117,7 +167,16 @@ public class ApacheHttpClient {
         }
     }
     
-    private CredentialsProvider createCredsProvider(String username, String password) {
+	private CloseableHttpClient createTrustyHttpClient(String username,
+			String password) {
+		final CloseableHttpClient httpClient = HttpClients.custom()
+                .setDefaultCredentialsProvider(createCredsProvider(username, password))
+                .setSSLSocketFactory(createGenerousSSLSocketFactory())
+                .build();
+		return httpClient;
+	}
+
+	private CredentialsProvider createCredsProvider(String username, String password) {
         CredentialsProvider credsProvider = new BasicCredentialsProvider();
         credsProvider.setCredentials(
                 AuthScope.ANY,

@@ -1,6 +1,5 @@
 package com.gemini.discover.asa;
 
-import com.gemini.discover.asa.ASA;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
@@ -22,7 +21,7 @@ public class ASATest {
      * Test getting configuration information of a given network from a given device
      */
     public void testGetConfigurationFromDevice() {
-        ASA asa = new ASA("my-f1", "cisco", "cisco");
+        ASA asa = new ASA("my-f1", "", "");
         try {
             ASA.Configuration config = asa.getConfiguration("192.168.103.1/24");
             Object[][] sections = {
@@ -36,6 +35,50 @@ public class ASATest {
         } catch (IOException e) {
             e.printStackTrace();
             fail("ASA.getConfiguration");
+        }
+    }
+
+    @Ignore
+    /**
+     * Test ASA.setConfiguration method
+     */
+    public void testSetConfiguration() {
+        ASA asa = new ASA("my-f1", "", "");
+        try {
+        	String config = "Hello world"; //an illegal configuration command on ASA
+            String result = asa.setConfiguration(config);
+            String expected = 
+            		"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+            		"<!DOCTYPE ErrorList SYSTEM \"urn:com-cisco-nm-callhome:ErrorList\">\n" + 
+            		"<ErrorList>\n" +
+            		"<config-failure>\n" + 
+            		"<error-info id=\"0\" type=\"error\">\n" + 
+            		"Hello world\n" + 
+            		"   ^\nERROR: % Invalid input detected at '^' marker.\n" + 
+            		"</error-info>\n</config-failure>\n" + 
+            		"</ErrorList>\n";
+            System.out.println(result);
+            assertEquals(result, expected);
+        } catch (IOException e) {
+            e.printStackTrace();
+            fail("ASA.setConfiguration");
+        }
+    }
+
+
+    @Test
+    /**
+     * Test ASA.setConfiguration method
+     */
+    public void testSetConfiguration4MultiContext() {
+        ASA asa = new ASA("multi-routed-asa", "asadp", "dat@package");
+        try {
+        	String config = "change system\nshow context";
+            String result = asa.setConfiguration(config);
+            System.out.println(result);
+        } catch (IOException e) {
+            e.printStackTrace();
+            fail("ASA.setConfiguration for multi context");
         }
     }
 
@@ -197,7 +240,7 @@ public class ASATest {
      * Test getting access-lists for applied to given network
      * configuration of a device.
      */
-    public void testGetConfigurationAccessLiss() {
+    public void testGetConfigurationAccessList() {
         try {
             String filePath = getFilePath("asa-running-config.txt");
             String[] lines = Files.lines(Paths.get(filePath)).toArray(String[]::new);
@@ -278,6 +321,7 @@ public class ASATest {
         assertArrayEquals(lines, CompositeCommand.toStringArray(commands));
         assertEquals(cmd.toString(), "main\n sub1\n  sub1.1\n sub2");
     }
+
     
     @Ignore
     public void testFlatMap() {

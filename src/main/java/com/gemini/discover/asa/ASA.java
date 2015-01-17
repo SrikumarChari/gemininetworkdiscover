@@ -6,8 +6,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.net.util.SubnetUtils;
 import org.apache.commons.net.util.SubnetUtils.SubnetInfo;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 
 /**
  * Data model of an ASA device.
@@ -43,14 +46,37 @@ public class ASA  {
 
     /***
      * Send the configuration to this ASA.
-     * @param cfg Configuration
-     * @return delivery result
+     * @param cfg String
+     * @return String response from ASA
+     * @throws IOException 
      */
-    public Object setConfiguration(Configuration cfg) {
-        //TODO implementation
-        return null;
+    public String setConfiguration(String cfg) throws IOException {
+        final String url = "https://" +address + "/admin/config";
+		String data = ASA.makeConfigXml(cfg);
+		StringEntity entity = new StringEntity(data, ContentType.create("text/xml"));
+    	String result = new ApacheHttpClient().post(url, user, password, entity);
+    	return result;
     }
 
+    /**
+     * 
+     * @param config String configuration in string format
+     * @return the desired XML format accepted by post request to https://<asa>/admin/config
+     * TODO use JDOM
+     */
+	static public String makeConfigXml(String data) {
+		StringBuffer result = new StringBuffer("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" +
+                "<config-data config-action=\"merge\" errors=\"continue\">\n");
+		String[] lines = data.trim().split("\n");
+		for (int i = 0; i < lines.length; i++) {
+            result.append("<cli id=\"" + i + "\">");
+            result.append(StringEscapeUtils.escapeXml(lines[i]));
+            result.append("</cli>\n");
+		}
+		result.append("</config-data>\n");
+		return result.toString();
+	}
+    
     /**
      * 
      * InterfaceCommand represents the ASA CLI for interface.
