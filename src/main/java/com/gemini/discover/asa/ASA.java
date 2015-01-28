@@ -6,11 +6,14 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.net.util.SubnetUtils;
 import org.apache.commons.net.util.SubnetUtils.SubnetInfo;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 
 /**
  * Data model of an ASA device.
@@ -62,21 +65,25 @@ public class ASA  {
      * 
      * @param config String configuration in string format
      * @return the desired XML format accepted by post request to https://<asa>/admin/config
-     * TODO use JDOM
      */
 	static public String makeConfigXml(String data) {
-		StringBuffer result = new StringBuffer("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" +
-                "<config-data config-action=\"merge\" errors=\"continue\">\n");
+		Document doc = new Document();
+		Element configData = new Element("config-data");
+		doc.setContent(configData);
 		String[] lines = data.trim().split("\n");
-		for (int i = 0; i < lines.length; i++) {
-            result.append("<cli id=\"" + i + "\">");
-            result.append(StringEscapeUtils.escapeXml(lines[i]));
-            result.append("</cli>\n");
+
+		configData.setAttribute("config-action", "merge");
+		configData.setAttribute("errors", "continue");
+		for ( int i = 0; i < lines.length; i++) {
+			Element cli = new Element("cli");
+			cli.setAttribute("id", ""+i);
+			cli.setText(lines[i]);
+			configData.addContent(cli);
 		}
-		result.append("</config-data>\n");
-		return result.toString();
-	}
-    
+		XMLOutputter out = new XMLOutputter(Format.getPrettyFormat());
+		return out.outputString(doc);
+   }
+	
     /**
      * 
      * InterfaceCommand represents the ASA CLI for interface.

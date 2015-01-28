@@ -41,7 +41,7 @@ public class ApacheHttpClientTest {
 	public void testHttpPostASA() {
 		ApacheHttpClient httpClient = new ApacheHttpClient();
 		String url = "https://asav/admin/config";
-		String config = "<error> & cd";
+		String config = "show version";
 		String data = ASA.makeConfigXml(config);
 		StringEntity entity = new StringEntity(data, ContentType.create("text/xml"));
 		try {
